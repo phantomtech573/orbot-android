@@ -10,7 +10,7 @@ plugins {
 
 kotlin { jvmToolchain(25) }
 
-val orbotBaseVersionCode = 1790200300
+val orbotBaseVersionCode = 1792200100
 fun getVersionName(): String {
     // Gets the version name from the latest Git tag
     return providers.exec {
@@ -141,7 +141,7 @@ androidComponents {
                 val increment =
                     incrementMap[output.filters.find { it.filterType.name == "ABI" }?.identifier]
                         ?: 0
-                output.versionCode = orbotBaseVersionCode + increment
+                output.versionCode = (orbotBaseVersionCode) + increment
             }
         }
     }
@@ -168,14 +168,19 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.work.kotlin)
     implementation(libs.upnp)
+
+    // IPtProxy, for Snowflake, obfs4, dnstt and all other pluggable transports
     implementation(libs.iptproxy)
+    // uncomment to use a local build of IPtProxy:
+    // implementation(files("../../IPtProxy/IPtProxy.aar"))
+
     implementation(libs.quickie)
 
     // Tor
     implementation(files("../libs/geoip.jar"))
     api(libs.guardian.jtorctl)
     api(libs.tor.android)
-    // local tor-android:
+    // uncomment to use a local build of tor-android:
     // api(files("../../tor-android/tor-android-binary/build/outputs/aar/tor-android-binary-debug.aar"))
 
     testImplementation(libs.junit.jupiter)
@@ -240,6 +245,18 @@ val updateBuiltinBridges by tasks.registering {
                         }
                     }
                 println("Successfully fetched builtin bridges.")
+
+                for (country in listOf("ae", "af", "bd", "cn", "co", "global", "id", "ir", "kw", "pk", "qa", "ru", "sy", "tr", "ug", "uz")) {
+                    URI("https://raw.githubusercontent.com/dnstt-xyz/dnstt_xyz_app/refs/heads/main/assets/dns/$country.json")
+                        .toURL()
+                        .openStream()
+                        .use { input ->
+                            assetsDir.file("dns-$country.json").asFile.outputStream().use { output ->
+                                input.copyTo(output)
+                            }
+                        }
+                    println("Successfully fetched dns-$country.json.")
+                }
             } catch (e: Exception) {
                 throw GradleException("ERROR: Could not fetch builtin bridges: ${e.message}", e)
             }
