@@ -1,4 +1,4 @@
-image: registry.gitlab.com/fdroid/fdroidserver:buildserver-bullseye
+image: registry.gitlab.com/fdroid/fdroidserver
 
 ##image: openjdk:11-jdk
 
