@@ -1,6 +1,4 @@
-image: registry.gitlab.com/fdroid/fdroidserver
-
-##image: openjdk:11-jdk
+gitlab.com/fdroid/fdroidserver
 
 variables:
   ANDROID_COMPILE_SDK: "31"
