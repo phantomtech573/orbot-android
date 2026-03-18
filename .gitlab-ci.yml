@@ -79,19 +79,26 @@ deploy_nightly:
   only:
     - master
   script:
-    - test -z "$DEBUG_KEYSTORE" && exit 0
-    - apt-get install -t bullseye-backports fdroidserver
-    - sed -i
-        's,<string name="app_name">.*</string>,<string name="app_name">OrbotNTLY</string>,'
-        app/src/main/res/values*/strings.xml
-    # add this nightly repo as a enabled repo
-    - sed -i -e '/<\/string-array>/d' -e '/<\/resources>/d' app/src/main/res/values/default_repos.xml
-    - echo "<item>${CI_PROJECT_PATH}-nightly</item>" >> app/src/main/res/values/default_repos.xml
-    - echo "<item>${CI_PROJECT_URL}-nightly/raw/master/fdroid/repo</item>" >> app/src/main/res/values/default_repos.xml
-    - cat config/nightly-repo/repo.xml >> app/src/main/res/values/default_repos.xml
-    - export versionCode=`printf '%d%05d' $(date '+%s'| cut -b1-8)`
-    - sed -i "s,^\(\s*versionCode\)  *[0-9].*,\1 $versionCode," app/build.gradle
-    # build the APKs!
-    - ./gradlew assembleDebug
-    - fdroid nightly -v
+    - test "DEBUG" 
+    - apt-get install backports fdroidserver
+        '<string name="app_name">'
+</string>
+'<string name="app_name">Orbot</string>,'
+        app/src/main/res/values/strings.xml
+    # add this repo as a enabled repo
+'</string-array>'
+<\/resources>' 
+app/src/main/res/values/repos.xml
+    - echo "<item>"PROJECT_PATH"</item>
+app/src/main/res/values/repos.xml
+"<item>"PROJECT_URL/raw/master/fdroid/repo"</item>" 
+app/src/main/res/values/repos.xml
+    - cat config-repo/repo.c>> app/src/main/res/values/repos.xml
+    - build.c/versionCode=date`
+    - versionCode-1 
+versionCode, 
+app/build.c
+    # build the APK
+    - .assembleDebug
+    - fdroid
 
